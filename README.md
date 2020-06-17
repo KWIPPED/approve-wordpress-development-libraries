@@ -19,7 +19,7 @@ The approve developer tools stands alone, and requires connection information co
 ```php
 <?php
 	$client_settings = [
-    "approve_id"=>"YOUR APPROVE ID",
+		"approve_id"=>"YOUR APPROVE ID",
 		"approve_url"=>"https://www.kwipped.com",
 		"test"=>false
 	];
