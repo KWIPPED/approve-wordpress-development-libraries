@@ -2,7 +2,7 @@
 
 The APPROVE Devtools plugin provides the building blocks for integrating KWIPPED APPROVE into any worpress website. Rather than addressing a specific template or e-commerce platform, it is generic and can be used with any template and any e-commerce platform. . 
 
-This progin provides functionality in three different web stack layers. Page level (design), Javascipt (page logic) and PHP code (server side programming). 
+This progin provides functionality in two different web stack layers. Javascipt (page logic) and PHP code (server side programming). 
 
 
 # TL;DR
@@ -10,63 +10,23 @@ For experienced developers.
 1. Retrieve your APPROVE id from KWIPPED
 2. Download the WordPress Devtools plugin from the dist folder in GitHub
 3. Install the plugin into WordPress
-4. Set your APPROVE id in the plugin settings. 
-5. Utilize the tags, javascript and php library functions provided by the plugin in your website.
+4. Create a file containing the APPROVE connection information.
+5. Utilize avascript and php library functions provided by the plugin in your website.
+
+# APPROVE Connection Information
+The approve developer tools stands alone, and requires connection information contained in a file names __client\_settings.php__. This file must be located in the folder where the plugin is installed. Its contents should look like this. __PLEASE FILL IN YOUR APPROVE ID__
+
+```php
+<?php
+	$client_settings = [
+    "approve_id"=>"YOUR APPROVE ID",
+		"approve_url"=>"https://www.kwipped.com",
+		"test"=>false
+	];
+?>
+```
 
 # Integration Levels
-
-## Page level tag integration
-
-There are three types of tags that may be used on site pages. Teaser tags, action (button) tags, and "hide" tags.
-
-### Teaser tags
-
-Used to place dynamic teaser rates in web pages.
-
-```html
-<span approve-function="teaser_rate" approve-total="30000"></span>
-```
-
-The approve-function and approve-total properties are required. The content of the tag bearing these properties will be replaced with the official fiunancing teaser rate for the value of the approve-total property.
-
-### Action (button) tags
-
-```html
-<button
-        approve-function="hosted_app"
-        approve-action="add_to_app"
-        approve-model="Model-5"
-        approve-price="5000"
-        approve-qty="1"
-        approve-item-type="new_product"
->Click here to finance a Model-5</button>
-
-```
-
-The approve-function, approve-action, approve-model, approve-price, approve-qty, and approve-item-type properties are required. The content of the tag bearing these properties will not be changed, but an action will be added to the element's click event. 
-
-Note: The only approve-function available in the devtools plugin is "hosted_app" at this time.
-
-### "Hide" tags
-
-These tags are used to hide selected content on the page. 
-
-```html
-<approve-hide/>
-```
-
-Whe placed no the page, it will cause any other tags containing the "approve-container" property to be hidden. Example:
-
-```html
-<div approve-container>
-  Lease a decontamination trailler for
-  <span approve-function="teaser_rate" approve-total="300000"></span>/mo
-</div>
-
-<approve-hide/>
-```
-
-In the example above, the "approve-hide" tag will case the "div" containine the finance teaser to be hidden on the page.
 
 ## Javascript Integration
 
@@ -168,26 +128,6 @@ echo "<pre>";
 echo print_r($app->get_teaser(25000));
 echo "</pre>";
 ```
-
-# Detailed Installation Instructions
-
-## 1. Retrieve your APPROVE id from KWIPPED
-In order to use the APPROVE woocommerce plugin you will need a subscription to the APPROVE lenger network at KWIPPED. For more information please visit www.kwipped.com
-1. Log into KWIPPED
-2. Visit the APPROVE settings page
-3. Copy your APPROVE id
-
-## 2. Download the wordpress plugin from the dist folder in GitHub
-1. In the APPROVE Woocommerce plugin page in GitHub (https://github.com/KWIPPED/approve-wordpress-devtools-plugin navigate to the dist folder displayed close to the top of the page. Download the approve-woocommerce-plugin.zip to your computer.
-
-## 3. Install the plugin into Wordpress
-In Wordpress navigate to the plugins page. Click on "Add New", then "Upload Plugin"
-1. Select the file you downloaded on Section #2
-2. The APPROVE Devtools plugin is now installed.
-
-## 4. Set your APPROVE id in the plugin settings
-1. In Wordpress, under "Settings" click on "APPROVE Devtools Plugin"
-2. Enter your Approve id retrieved in Section #1
 
 # Updates
 

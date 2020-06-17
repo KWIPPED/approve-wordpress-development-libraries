@@ -1,28 +1,18 @@
 <?php
-namespace com\kwipped\approve\wordpress\devtools;
-//****************************************************************************************
-//* You should not modify the code below. It assures the correct format needed by Approve.
-//*****************************************************************************************
 class Approve{
 	private $items = [];
 	private $current_total=0;
-	private $kwipped_approve_id = null;
-	private $mode = "live";
-	private $landing_page_url = null;
-	private $api_url = null;
+	private $approve_id = null;
+	private $approve_url = null;
 	private $cacert_file = null;
 
 	/**
 	 * Constructor
 	 */
-	function __construct() {
-		$kwipped_approve_id=get_option(PLUGIN_PREFIX.'_options');
-		if(!empty($kwipped_approve_id) && isset($kwipped_approve_id['approve_id'])){
-			$this->kwipped_approve_id=$kwipped_approve_id['approve_id'];
-		}
-		$this->landing_page_url= $this->mode=="test" ? "https://dev.kwipped.com/approve/finance" : "https://www.kwipped.com/approve/finance";
-		$this->api_url= $this->mode=="test" ? "https://dev.kwipped.com/api/v2/approve-widget/finance-teasers/" : "https://www.kwipped.com/api/v2/approve-widget/finance-teasers/" ;
-		$this->cacert_file= $this->mode=="test" ? "/usr/local/etc/openssl/cert.pem" : __DIR__."/cacert.pem";
+	function __construct($settings) {
+		$this->approve_id = $settings->approve_id;
+		$this->approve_url = $settings->approve_url;
+		$this->cacert_file= isset($settings->test) && $settings->test ? "/usr/local/etc/openssl/cert.pem" : __DIR__."/cacert.pem";
 	}
 
 	/**
@@ -34,7 +24,7 @@ class Approve{
 		$tmp["quantity"]=$quantity;
 		$tmp["type"]=$type;
 		//In Approve the quantity is a representation of how many items are in the total.
-		$tmp["price"]=$price;
+		$tmp["price"]=$price ? $price : 0 ;
 		$this->current_total+=($tmp["price"]*$quantity);
 		$this->items[]=(object)$tmp;
 	}
@@ -52,16 +42,16 @@ class Approve{
 			else{
 				$teaser = null;
 			}
-			
 		}
 		else{
 			$teaser = "N/A Your server does not suppor CURL requests. Please ask your system administrator to enable it.";
 		}
 
 		$data =  [
-			"url"=>$this->landing_page_url."?approveid=".$this->kwipped_approve_id.(sizeof($this->items)>0 ? "&items=".json_encode($this->items) : null),
+			"url"=>$this->approve_url."/approve/finance?approveid=".$this->approve_id.(sizeof($this->items)>0 ? "&items=".urlencode(json_encode($this->items)) : null),
 			"teaser"=>$teaser,
-			"teaser_raw"=>$teaser_raw
+			"teaser_raw"=>$teaser_raw,
+			"items"=>$this->items
 		];
 
 		return $data;
@@ -72,13 +62,13 @@ class Approve{
 	 */
 	public function get_teaser($amount){
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $this->api_url.$amount);
+		curl_setopt($ch, CURLOPT_URL, $this->approve_url."/api/v2/approve-widget/finance-teasers/".$amount);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
 		if(!empty($this->cacert_file)) curl_setopt ($ch, CURLOPT_CAINFO, $this->cacert_file);
 		//var_dump(openssl_get_cert_locations());
 		$headers = array();
-		$headers[] = 'Authorization: Basic '.$this->kwipped_approve_id;
+		$headers[] = 'Authorization: Basic '.$this->approve_id;
 		$headers[] = 'Content-Type: application/json';
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -94,32 +84,6 @@ class Approve{
 		else
 			$teaser = null;
 		return $teaser;
-	}
-
-	public static function ajax_get_teaser(){
-		$approve = new \com\kwipped\approve\wordpress\devtools\Approve();
-		$value = $_POST['data']['value'];
-		wp_send_json($approve->get_teaser($value));
-		wp_die(); // this is required to terminate immediately and return a proper response
-	}
-
-	public static function ajax_get_button_action() {
-		$approve = new Approve();
-		$approve->add($_POST['data']['model'],$_POST['data']['price'],$_POST['data']['qty'],$_POST['data']['item_type']);
-		wp_send_json($approve->get_approve_information());
-		wp_die(); // this is required to terminate immediately and return a proper response
-	}
-
-	public static function ajax_get_approve_information() {
-		\com\kwipped\approve\wordpress\devtools\dd2($_POST);
-		$approve = new Approve();
-		// $items = json_decode($_POST['data']['items']);
-		// \com\kwipped\approve\wordpress\devtools\dd2($_POST);
-		foreach($_POST['data']['items'] as $item){
-			$approve->add($item['model'],$item['price'],$item['qty'],$item['type']);
-		}
-		wp_send_json($approve->get_approve_information());
-		wp_die(); // this is required to terminate immediately and return a proper response
 	}
 }
 ?>
