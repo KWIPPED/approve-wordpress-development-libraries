@@ -3,7 +3,7 @@
 	Plugin Name: APPROVE WordPress Development Tools
 	Plugin URI: http://kwipped.com
 	description:May be used by APPROVE clients to create the necessary link to connect into the Approve cart from wordpress.
-	Version: 2.0.1
+	Version: 2.0.2
 	Author: Wellington Souza
 	Author URI: http://kwipped.com
 	License: GPL2
