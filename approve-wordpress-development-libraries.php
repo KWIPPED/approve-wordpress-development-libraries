@@ -3,7 +3,7 @@
 	Plugin Name: APPROVE WordPress Development Tools
 	Plugin URI: http://kwipped.com
 	description:May be used by APPROVE clients to create the necessary link to connect into the Approve cart from wordpress.
-	Version: 2.0.0
+	Version: 2.0.1
 	Author: Wellington Souza
 	Author URI: http://kwipped.com
 	License: GPL2
@@ -12,9 +12,9 @@
 
 	class ApproveWordPressDevelopmentLibraries{
 		public static $version = "2.0.0";
-		public $approve_id = "";
-		public $approve_url = "";
-		public $test = false;
+		public static $approve_id = "";
+		public static $approve_url = "";
+		public static $test = false;
 
 		public function __construct(){
 			/**
@@ -33,9 +33,9 @@
 			//Settings such as approve_id and approve_url...
 			if(file_exists(__DIR__."/client_settings.php")){
 				require(__DIR__."/client_settings.php");
-				$this->approve_id = $client_settings['approve_id'];
-				$this->approve_url = $client_settings['approve_url'];
-				$this->test = isset($client_settings['test']) && $client_settings['test'] ? true : false;
+				self::$approve_id = $client_settings['approve_id'];
+				self::$approve_url = $client_settings['approve_url'];
+				self::$test = isset($client_settings['test']) && $client_settings['test'] ? true : false;
 			}
 
 			// //Will use information passed in data dn return approve rates base on that
@@ -47,7 +47,7 @@
 			add_action("wp_ajax_nopriv_get_approve_information_devtools",[$this,'get_approve_information']);
 		}
 
-		function dd2($item){
+		public static function dd2($item){
 			error_log(print_r($item,true));
 		}
 		
@@ -66,24 +66,14 @@
 
 		public function get_approve_teaser(){
 			$value = $_POST['data']['value'];
-			$settings = (object)[
-				"approve_id"=>$this->approve_id,
-				"approve_url"=>$this->approve_url,
-				"test"=>$this->test
-			];
-			$approve = new Approve($settings);
+			$approve = new Approve();
 			wp_send_json($approve->get_teaser($value));
 			wp_die(); // this is required to terminate immediately and return a proper response
 		}
 
 		public function get_approve_information(){
 			$items = $_POST['data']['items'];
-			$settings = (object)[
-				"approve_id"=>$this->approve_id,
-				"approve_url"=>$this->approve_url,
-				"test"=>$this->test
-			];
-			$approve = new Approve($settings);
+			$approve = new Approve();
 			foreach($items as $item) $approve->add($item['model'],$item['price'],$item['qty'],$item['type']);
 			wp_send_json($approve->get_approve_information());
 			wp_die(); // this is required to terminate immediately and return a proper response

@@ -9,10 +9,11 @@ class Approve{
 	/**
 	 * Constructor
 	 */
-	function __construct($settings) {
-		$this->approve_id = $settings->approve_id;
-		$this->approve_url = $settings->approve_url;
-		$this->cacert_file= isset($settings->test) && $settings->test ? "/usr/local/etc/openssl/cert.pem" : __DIR__."/cacert.pem";
+	function __construct() {
+		$this->approve_id = ApproveWordPressDevelopmentLibraries::$approve_id;
+		$this->approve_url = ApproveWordPressDevelopmentLibraries::$approve_url;
+		$this->cacert_file= isset(ApproveWordPressDevelopmentLibraries::$test) && ApproveWordPressDevelopmentLibraries::$test ? 
+			"/usr/local/etc/openssl/cert.pem" : __DIR__."/cacert.pem";
 	}
 
 	/**
