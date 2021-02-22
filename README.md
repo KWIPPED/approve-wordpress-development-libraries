@@ -1,3 +1,7 @@
+# IMPORTANT
+WE HAVE DROPPED SUPPORT FOR THIS LIBRARY AFTER THE UPDATE TO PLUGIN 3.0. FEEL FREE TO USE THIS LIBRARY, AND LET US KNOW IF YOU
+RUN INTO AN ISSUE WHILE USING IT. WE WILL NO LONGER UPDATE THIS LIBRARY, BUT WE HAVE ALTERNATIVE WAYS TO ACCOMPLISH THE SAME THINGS.
+
 # Plugin Features
 
 The APPROVE Devtools plugin provides the building blocks for integrating KWIPPED APPROVE into any worpress website. Rather than addressing a specific template or e-commerce platform, it is generic and can be used with any template and any e-commerce platform. . 
